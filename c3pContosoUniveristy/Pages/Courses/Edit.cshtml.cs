@@ -50,7 +50,7 @@ namespace c3pContosoUniveristy.Pages.Courses
             // 보안문자는 글쓰기에만 사용
             //var formSecurity = Request.Form["SecurityText"].ToString();
             //var sessionSecurity = HttpContext.Session.GetString("SecurityText");
-            
+
             //if (formSecurity != sessionSecurity)
             //{
             //    ViewData["Department"] = new SelectList(_context.Departments.OrderBy(d => d.Name),
@@ -60,6 +60,12 @@ namespace c3pContosoUniveristy.Pages.Courses
             //    return Page();
 
             //}
+
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+
+            }
 
             var courseToUpdate = await _context.Courses.FindAsync(id);
 
