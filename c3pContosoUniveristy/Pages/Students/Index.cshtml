@@ -1,0 +1,94 @@
+﻿@page
+@model c3pContosoUniveristy.Pages.Students.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+
+<h1>Index</h1>
+
+
+
+@*검색상자*@
+<div class="row" style="margin-bottom:10px">
+    <div class="col-4">
+
+        <a asp-page="Create" asp-route-path="@HttpContext.Request.QueryString" class="btn btn-outline-danger">Create New</a>
+
+    </div>
+    <div class="col-4">
+
+
+    </div>
+    <div class="col-4 text-right">
+        @await Component.InvokeAsync("Searching", Model.searchingVar)
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Student[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student[0].FirstMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student[0].EnrollmentDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Student)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstMidName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnrollmentDate)
+                </td>
+                <td>
+
+                    <a asp-page="./Edit" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Delete</a>
+
+                    @*<a href='./Details/@item.ID@(@HttpContext.Request.QueryString)'>Details</a>*@
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="text-center">
+    <paging4 url="@HttpContext.Request.Path"
+             page-index="@Model.PageIndex"
+             page-size=3
+             page-etc=''
+             record-count=@Model.TotalCount
+             page-counter=5
+             search-mode='@Model.searchingVar.SearchMode'
+             search-field='@Model.searchingVar.SearchField'
+             search-query='@Model.searchingVar.SearchQuery'>
+    </paging4>
+</div>
+
+
+
+
+
+
+@section stylesheets {
+    @*font-awasome 설정 cdn*@
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+}

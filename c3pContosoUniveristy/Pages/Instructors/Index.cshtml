@@ -1,0 +1,208 @@
+﻿@page
+
+@model c3pContosoUniveristy.Pages.Instructors.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@*검색상자*@
+<div class="row">
+    <div class="col-2">
+
+        <a asp-page="Create" asp-route-path="@HttpContext.Request.QueryString">Create New</a>
+
+    </div>
+
+    <div class="col-6">
+        <paging4 url="@HttpContext.Request.Path"
+                 page-index="@Model.PageIndex"
+                 page-size=3
+                 page-etc=''
+                 record-count=@Model.TotalCount
+                 page-counter=5
+                 search-mode='@Model.searchingVar.SearchMode'
+                 search-field='@Model.searchingVar.SearchField'
+                 search-query='@Model.searchingVar.SearchQuery'>
+        </paging4>
+    </div>
+
+    <div class="col-4 text-right">
+        @await Component.InvokeAsync("Searching", Model.searchingVar)
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor.Instructors.ToList()[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor.Instructors.ToList()[0].FirstMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor.Instructors.ToList()[0].HireDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor.Instructors.ToList()[0].OfficeAssignment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor.Courses)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Instructor.Instructors)
+        {
+
+            string selectedRow = "";
+            if (item.ID == Model.InstructorID)
+            {
+                selectedRow = "table-success";
+            }
+
+            <tr class="@selectedRow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstMidName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HireDate)
+                </td>
+                <td>
+                    @if (item.OfficeAssignment != null)
+                    {
+                        @item.OfficeAssignment.Location
+                    }
+                </td>
+                <td>
+                    @{
+                        foreach (var course in item.CourseAssignments)
+                        {
+                            @course.Course.CourseID @: @course.Course.Title<br />
+
+
+                        }
+                    }
+                </td>
+
+                <td>
+
+                    @{
+                        string pn = String.IsNullOrEmpty(@HttpContext.Request.QueryString.Value) ? "" : (
+                            (String.IsNullOrEmpty(HttpContext.Request.Query["Page"].ToString()) ? "" : "&Page=" + HttpContext.Request.Query["Page"].ToString())
+                            + (String.IsNullOrEmpty(HttpContext.Request.Query["SearchField"].ToString()) ? "" : "&SearchField=" + HttpContext.Request.Query["SearchField"].ToString())
+                            + (String.IsNullOrEmpty(HttpContext.Request.Query["SearchQuery"].ToString()) ? "" : "&SearchQuery=" + HttpContext.Request.Query["SearchQuery"].ToString()));
+
+                    }
+
+                    <a href="/Instructors?id=@item.ID@pn">Select</a> |
+
+                    <a asp-page="./Edit" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID" asp-route-path="@HttpContext.Request.QueryString">Delete</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+
+<hr />
+<br />
+
+@if (Model.Instructor.Courses != null)
+{
+    <h3>Courses Taught by Selected Instructor</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Department</th>
+        </tr>
+
+        @foreach (var item in Model.Instructor.Courses)
+        {
+            string selectedRow = "";
+            if (item.CourseID == Model.CourseID)
+            {
+                selectedRow = "table-success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @{
+                        string pn = String.IsNullOrEmpty(@HttpContext.Request.QueryString.Value) ? "" : (
+                            (String.IsNullOrEmpty(HttpContext.Request.Query["Id"].ToString()) ? "" : "&Id=" + HttpContext.Request.Query["Id"].ToString())
+                            + (String.IsNullOrEmpty(HttpContext.Request.Query["Page"].ToString()) ? "" : "&Page=" + HttpContext.Request.Query["Page"].ToString())
+                            + (String.IsNullOrEmpty(HttpContext.Request.Query["SearchField"].ToString()) ? "" : "&SearchField=" + HttpContext.Request.Query["SearchField"].ToString())
+                            + (String.IsNullOrEmpty(HttpContext.Request.Query["SearchQuery"].ToString()) ? "" : "&SearchQuery=" + HttpContext.Request.Query["SearchQuery"].ToString()));
+
+                    }
+
+                    @*<a asp-page="./Index" asp-route-courseID="@item.CourseID">Select</a>*@
+                    <a href="/Instructors?courseID=@item.CourseID@pn">Select</a>
+
+                </td>
+                <td>
+                    @item.CourseID
+                </td>
+                <td>
+                    @item.Title
+                </td>
+                <td>
+                    @item.Department.Name
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+
+<hr />
+@if (Model.Instructor.Enrollments != null)
+{
+    <h3>
+        Students Enrolled in Selected Course
+    </h3>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Grade</th>
+        </tr>
+        @foreach (var item in Model.Instructor.Enrollments)
+        {
+            <tr>
+                <td>
+                    @item.Student.FullName
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+            </tr>
+        }
+    </table>
+}
+<hr />
+
+@if (!String.IsNullOrEmpty(Request.Query["CourseID"]))
+{
+    <div>컴포넌트로 작성된 페이지 입니다.5</div>
+    @await Component.InvokeAsync("StudentsInInstructor", Model.CourseID);
+
+}
+
+@section stylesheets {
+    @*font-awasome 설정 cdn*@
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+}

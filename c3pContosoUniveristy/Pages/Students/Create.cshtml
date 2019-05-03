@@ -1,0 +1,34 @@
+﻿@page 
+@model c3pContosoUniveristy.Pages.Students.CreateModel
+
+@{
+    ViewData["Title"] = DataModels.FrmTypeExtensions.ToFriendlyString(Model.frmType);
+
+
+    //Create, Edit ViewComponents에 전달 변수
+    var studentForm = new DataModels.StudentFrm();
+
+    studentForm.Student = Model.Student;
+    studentForm.ErrorMessage = Model.ErrorMessage;
+    studentForm.FrmType = Model.frmType;
+    studentForm.ReturnUrl = Request.Query["Path"].ToString();
+}
+
+<h1>Create</h1>
+
+<h4>Student - @DataModels.FrmTypeExtensions.ToFriendlyString(Model.frmType) 입니다. </h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+
+        @await Component.InvokeAsync("StudentForm", studentForm)
+       
+    </div>
+    
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

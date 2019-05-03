@@ -1,0 +1,47 @@
+﻿@model DataModels.SearchingVar
+
+@{ 
+    
+    var dicField = Model.DicField;
+
+    string searchField = Model.SearchField;
+
+}
+<form asp-page="./index" method="get">
+
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <select name="SearchField" id="SearchField" class="custom-select">
+                @foreach (var item in dicField)
+                {
+
+
+                    if (item.Key == searchField)
+                    {
+                        <option value="@item.Key" selected>@item.Value</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Key" >@item.Value</option>
+                    }
+
+
+                }
+
+            </select>
+        </div>
+
+        <input type="text" id="SearchQuery" name="SearchQuery" value="@Model.SearchQuery" class="form-control"  />
+
+        <div class="input-group-append">
+            <input type="submit" value="검색" class="btn btn-outline-secondary" />
+            @if (Model.SearchMode)
+            {
+                <a asp-page="./Index" class="btn btn-outline-secondary">전체</a>
+
+            }
+        </div>
+    </div>
+    
+</form>
+
